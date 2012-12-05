@@ -35,6 +35,7 @@ app.configure('development', function() {
 app.get('/', routes.index);
 
 app.get('/api/zones', function (req, res) {
+    res.type('application/json');
     res.send(200, zones.all());
     res.end(200);
 });
@@ -42,13 +43,19 @@ app.get('/api/zones', function (req, res) {
 app.get('/api/zones/:name', function (req, res) {
     var z = zones.get(req.params.name);
     rss.feed(z, function (result) {
+        z.updated(new Date());
+        res.type('application/json');
         res.send(200, result);
     });
 });
 
 app.get('/api/authors/:name', function(req, res) {
-      
-    res.send(200, req.params.name);
+    //res.send(200, req.params.name);
+
+    rss.author(req.params.name, function (result) {
+        res.type('application/json');
+        res.send(200, result);
+    });
 });
 
 app.get('/api/search/:arg', function (req, res) {

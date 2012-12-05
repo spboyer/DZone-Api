@@ -2,6 +2,7 @@ var zone = (function () {
     function zone(name, url, title) {
         this.name = name;
         this.url = url;
+        this.lastUpdate = null;
     }
     zone.prototype.updated = function (d) {
         this.lastUpdate = d;
@@ -9,7 +10,7 @@ var zone = (function () {
     return zone;
 })();
 var article = (function () {
-    function article(title, summary, thumb, published, url, comments, views, submitter, picture, categories, guid) {
+    function article(title, summary, thumb, published, url, comments, views, submitter, picture, categories, guidStr) {
         this.title = title;
         this.summary = summary;
         this.thumb = thumb;
@@ -20,12 +21,9 @@ var article = (function () {
         this.submitter = submitter;
         this.picture = picture;
         this.categories = categories;
-        this.guid = guid;
-        if(this.picture !== null) {
-            this.print_url = this.picture.substring(0, this.picture.indexOf('.com/') + 5) + 'print/' + guid.toString();
-        } else {
-            this.print_url = this.url.substring(0, this.url.indexOf('.com/') + 5) + 'print/' + guid.toString();
-        }
+        var parts = guidStr.split('at');
+        this.guid = Number(parts[0].toString().trim().replace('node', ''));
+        this.print_url = parts[1].toString().trim() + 'print/' + this.guid.toString();
     }
     return article;
 })();
@@ -41,30 +39,43 @@ var feed = (function () {
     return feed;
 })();
 var headline = (function () {
-    function headline(title, summary, published, url, picture, guid) {
+    function headline(title, summary, published, url, picture, guidStr) {
         this.title = title;
         this.summary = summary;
         this.published = published;
         this.url = url;
         this.picture = picture;
-        this.guid = guid;
-        if(this.picture !== null) {
-            this.print_url = this.picture.substring(0, this.picture.indexOf('.com/') + 5) + 'print/' + guid.toString();
-        } else {
-            this.print_url = this.url.substring(0, this.url.indexOf('.com/') + 5) + 'print/' + guid.toString();
-        }
+        var parts = guidStr.split('at');
+        this.guid = Number(parts[0].toString().trim().replace('node', ''));
+        this.print_url = parts[1].toString().trim() + 'print/' + this.guid.toString();
     }
     return headline;
 })();
 var author = (function () {
-    function author(bio, picture, twitter, articles) {
+    function author(id, twitter, bio, picture) {
+        if (typeof twitter === "undefined") { twitter = ''; }
+        if (typeof bio === "undefined") { bio = ''; }
+        if (typeof picture === "undefined") { picture = ''; }
+        this.id = id;
         this.bio = bio;
         this.picture = picture;
-        this.articles = articles;
+        this.github = '';
+        this.facebook = '';
+        this.google = '';
+        this.linkedin = '';
         if(twitter.substring(0, 1) !== '@') {
             this.twitter = '@' + twitter.trim();
         }
+        this.articles = [];
     }
+    author.prototype.setSocial = function (git, goog, fb, lin) {
+        this.github = git;
+        this.facebook = fb;
+        this.linkedin = lin;
+    };
+    author.prototype.addHeadline = function (entry) {
+        this.articles.push(entry);
+    };
     return author;
 })();
 var exports;
