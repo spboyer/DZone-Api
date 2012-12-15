@@ -1,4 +1,6 @@
-﻿var rss = (function () {
+﻿
+
+var rss = (function () {
     // private vars
     var userRss = 'http://www.dzone.com/users/~id/rss';
 
@@ -42,7 +44,7 @@
             } else {
                 console.log('not found in cache');
 
-                result = new model.feed(zone.name, zone.url);
+                result = new model.feed(zone.name, zone.url, zone.title);
             }
 
             request(options, function (err, response, body) {
@@ -186,6 +188,18 @@
 
                 respond(author);
             });
+        },
+        summary: function (zones, respond) {
+           
+
+            var results = [];
+            for (var i = 0; i < zones.length;i++){
+                this.feed(zones[i], function (f) {
+                    results.push(f);
+                });
+            }
+
+            respond(results);
         }
     }
 })();

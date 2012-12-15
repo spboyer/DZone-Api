@@ -2,6 +2,7 @@ var zone = (function () {
     function zone(name, url, title) {
         this.name = name;
         this.url = url;
+        this.title = title;
         this.lastUpdate = null;
     }
     zone.prototype.updated = function (d) {
@@ -28,9 +29,10 @@ var article = (function () {
     return article;
 })();
 var feed = (function () {
-    function feed(name, url) {
+    function feed(name, url, title) {
         this.name = name;
         this.url = url;
+        this.title = title;
         this.articles = [];
     }
     feed.prototype.addArticle = function (a) {

@@ -3,7 +3,7 @@ class zone {
     public lastUpdate: Date = null;
 
     constructor(public name : string, public url : string, 
-        title : string) {
+        public title : string) {
 
     };
 
@@ -55,7 +55,7 @@ class article {
 
 class feed {
     public articles: article[];
-    constructor(public name : string, public url : string) {
+    constructor(public name : string, public url : string, public title : string) {
         this.articles = [];
     }
 

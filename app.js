@@ -11,7 +11,8 @@ var express = require('express')
 , request = require('request')
 , path = require('path')
 , rss = require('./rss').rss
-, zones = require('./zones').zones;
+, zones = require('./zones').zones
+, async = require('async');
 
 var app = express();
 
@@ -37,10 +38,11 @@ app.get('/', routes.index);
 app.get('/api/zones', function (req, res) {
     res.type('application/json');
     res.send(200, zones.all());
-    res.end(200);
+   // res.end(200);
 });
 
 app.get('/api/zones/:name', function (req, res) {
+
     var z = zones.get(req.params.name);
     rss.feed(z, function (result) {
         z.updated(new Date());
@@ -48,6 +50,55 @@ app.get('/api/zones/:name', function (req, res) {
         res.send(200, result);
     });
 });
+
+// need to make a better way to do this.  
+// handle in the client code. if there is no
+// results then get again.
+app.get('/api/summary', function (req, res) {
+    
+    var areas = ['main', 'html5', 'mobile', 'dotnet', 'cloud', 'windows phone'];
+    var sections = [];
+    var results = [];
+    var feed = function (area, callback) {
+        var z = zones.get(area);
+       
+        rss.feed(z, function (result) {
+            //console.log(z.name);
+            z.updated(new Date());
+
+            var res = result;
+            if (res.articles.length > 5) {
+                res.articles = res.articles.slice(0, 5);
+            }
+
+            
+            results[areas.indexOf(z.name)] = res;
+            //results.push(res);
+            callback(null);
+        });
+    };
+
+    async.forEach(areas, feed, function (err) {
+        //console.log('done');
+        res.type('application/json');
+        res.send(200, results);
+    });
+
+    //--> Syncronous code
+    //for (var i = 0; i < areas.length; i++) {
+    //    var z = zones.get(areas[i]);
+    //    z.updated(new Date());
+    //    sections.push(z);
+    //}
+
+    //rss.summary(sections, function(result) {
+        
+    //    res.type('application/json');
+    //    res.send(200, result);
+    //});
+    
+});
+
 
 app.get('/api/authors/:name', function(req, res) {
     //res.send(200, req.params.name);
