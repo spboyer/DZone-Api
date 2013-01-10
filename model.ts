@@ -49,7 +49,7 @@ class article {
 
         var parts = guidStr.split('at');
         this.guid = Number(parts[0].toString().trim().replace('node', ''));
-        this.print_url = parts[1].toString().trim() + 'print/' + this.guid.toString();
+        this.print_url = parts[1].toString().trim() + '/print/' + this.guid.toString();
     }
 }
 
@@ -82,7 +82,7 @@ class headline {
         //}
         var parts = guidStr.split('at');
         this.guid = Number(parts[0].toString().trim().replace('node', ''));
-        this.print_url = parts[1].toString().trim() + 'print/' + this.guid.toString();
+        this.print_url = parts[1].toString().trim() + '/print/' + this.guid.toString();
     }
 }
 

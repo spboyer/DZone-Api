@@ -12,6 +12,7 @@ var express = require('express')
 , path = require('path')
 , rss = require('./rss').rss
 , zones = require('./zones').zones
+, model = require('./model')
 , async = require('async');
 
 var app = express();
@@ -51,12 +52,17 @@ app.get('/api/zones/:name', function (req, res) {
     });
 });
 
-// need to make a better way to do this.  
-// handle in the client code. if there is no
-// results then get again.
+
 app.get('/api/summary', function (req, res) {
     
-    var areas = ['main', 'html5', 'mobile', 'dotnet', 'cloud', 'windows phone'];
+    var areas = [];
+    var myzones = zones.all();
+
+    for (var i = 0; i < myzones.length; i++) {
+        areas[i] = myzones[i].name;
+    }
+
+    //var areas = ['main', 'html5', 'mobile', 'dotnet', 'cloud', 'windows phone'];
     var sections = [];
     var results = [];
     var feed = function (area, callback) {
@@ -68,7 +74,7 @@ app.get('/api/summary', function (req, res) {
 
             var res = result;
             if (res.articles.length > 5) {
-                res.articles = res.articles.slice(0, 5);
+                //res.articles = res.articles.slice(0, 5);
             }
 
             
@@ -80,6 +86,8 @@ app.get('/api/summary', function (req, res) {
 
     async.forEach(areas, feed, function (err) {
         //console.log('done');
+
+        
         res.type('application/json');
         res.send(200, results);
     });

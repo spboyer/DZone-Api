@@ -24,7 +24,7 @@ var article = (function () {
         this.categories = categories;
         var parts = guidStr.split('at');
         this.guid = Number(parts[0].toString().trim().replace('node', ''));
-        this.print_url = parts[1].toString().trim() + 'print/' + this.guid.toString();
+        this.print_url = parts[1].toString().trim() + '/print/' + this.guid.toString();
     }
     return article;
 })();
@@ -49,7 +49,7 @@ var headline = (function () {
         this.picture = picture;
         var parts = guidStr.split('at');
         this.guid = Number(parts[0].toString().trim().replace('node', ''));
-        this.print_url = parts[1].toString().trim() + 'print/' + this.guid.toString();
+        this.print_url = parts[1].toString().trim() + '/print/' + this.guid.toString();
     }
     return headline;
 })();
