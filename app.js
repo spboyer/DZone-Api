@@ -18,6 +18,7 @@ var express = require('express')
 var app = express();
 
 app.configure(function() {
+    app.use(express.compress());
     app.set('port', process.env.PORT || 3001);
     app.set('views', __dirname + '/views');
     app.set('view engine', 'jade');
@@ -33,6 +34,13 @@ app.configure('development', function() {
     app.use(express.errorHandler());
 });
 
+app.all('/', function(req, res, next) {
+  console.log('in all');
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "X-Requested-With");
+  next();
+ });
+ 
 // rout configuration and really the controller mappings. could abstract further if need be
 app.get('/', routes.index);
 
@@ -54,7 +62,9 @@ app.get('/api/zones/:name', function (req, res) {
 
 
 app.get('/api/summary', function (req, res) {
-    
+    res.header("Access-Control-Allow-Origin", "*");
+    //res.header("Access-Control-Allow-Headers", "X-Requested-With");
+  
     var areas = [];
     var myzones = zones.all();
 
